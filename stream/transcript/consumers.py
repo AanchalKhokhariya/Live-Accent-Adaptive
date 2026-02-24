@@ -30,6 +30,7 @@ class TranscriptConsumer(AsyncWebsocketConsumer):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as f:
             f.write(audio_bytes)
             temp_path = f.name
+            print("Temp file path:", temp_path)
 
         try: 
             print("Running Whisper...")

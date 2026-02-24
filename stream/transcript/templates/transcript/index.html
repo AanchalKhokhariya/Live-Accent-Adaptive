@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Live Transcription</title>
-  </head>
-  <body>
+
+<head>
+  <title>Live Transcription</title>
+</head>
+
+<body>
   <h1>Transcribe Audio With Django</h1>
 
   <p id="status">Disconnected</p>
-  <p id="transcript"></p>
 
   <button id="startBtn">Start Recording</button>
   <button id="stopBtn" disabled>Stop Recording</button>
+  <button id="downloadBtn">Save as File</button>
+  <textarea id="transcript" rows="10" style="
+    width: 60%;
+    max-width: 600px;
+    margin-top: 20px;
+    display: block;
+    resize: vertical;
+    padding: 10px;
+    font-size: 16px;
+  ">
+  </textarea>
 
+  <p id="saveStatus" style="font-size:14px; color:green;"></p>
   <script>
-    let mediaRecorder;  
+    let mediaRecorder;
     let socket;
     let stream;
     let chunks = [];
@@ -32,7 +45,10 @@
 
       socket.onmessage = (event) => {
         if (event.data) {
-          document.getElementById("transcript").textContent += " " + event.data;
+          const transcriptBox = document.getElementById("transcript");
+          transcriptBox.value += " " + event.data;
+          transcriptBox.dispatchEvent(new Event("input"));
+          transcriptBox.scrollTop = transcriptBox.scrollHeight;
         }
       };
 
@@ -83,6 +99,57 @@
       startBtn.disabled = false;
       stopBtn.disabled = true;
     };
-</script>
+
+    const transcriptBox = document.getElementById("transcript");
+    const saveStatus = document.getElementById("saveStatus");
+
+    // Load saved transcript when page loads
+    window.onload = () => {
+      const savedText = localStorage.getItem("transcript_data");
+      if (savedText) {
+        transcriptBox.value = savedText;
+      }
+    };
+
+    // Auto-save when user types
+    transcriptBox.addEventListener("input", () => {
+      localStorage.setItem("transcript_data", transcriptBox.value);
+
+      saveStatus.textContent = "Auto-saved...";
+
+      setTimeout(() => {
+        saveStatus.textContent = "";
+      }, 1500);
+    });
+
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    downloadBtn.onclick = () => {
+      const text = transcriptBox.value;
+
+      if (!text.trim()) {
+        alert("Transcript is empty!");
+        return;
+      }
+
+      const blob = new Blob([text], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+
+      // Create filename with date & time
+      const now = new Date();
+      const filename = `transcript_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}.txt`;
+
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+  </script>
 </body>
+
 </html>
