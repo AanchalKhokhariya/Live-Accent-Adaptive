@@ -13,6 +13,7 @@
   <button id="startBtn">Start Recording</button>
   <button id="stopBtn" disabled>Stop Recording</button>
   <button id="downloadBtn">Save as File</button>
+  <button id="clearBtn">Clear Transcript</button>
   <textarea id="transcript" rows="10" style="
     width: 60%;
     max-width: 600px;
@@ -148,6 +149,27 @@
 
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+    };
+
+    const clearBtn = document.getElementById("clearBtn");
+
+    clearBtn.onclick = () => {
+      if (!transcriptBox.value.trim()) {
+        alert("Transcript is already empty.");
+        return;
+      }
+
+      const confirmClear = confirm("Are you sure you want to clear the transcript?");
+
+      if (confirmClear) {
+        transcriptBox.value = "";
+        localStorage.removeItem("transcript_data");
+        saveStatus.textContent = "Transcript cleared.";
+
+        setTimeout(() => {
+          saveStatus.textContent = "";
+        }, 1500);
+      }
     };
   </script>
 </body>
