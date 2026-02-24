@@ -19,13 +19,9 @@ class TranscriptConsumer(AsyncWebsocketConsumer):
 
             loop = asyncio.get_event_loop()
 
-            transcript = await loop.run_in_executor(
-                None,
-                self.transcribe_audio,
-                bytes_data
-            )
-
-            print("Transcription done:", transcript)   # 👈 OPTIONAL DEBUG
+            transcript = await loop.run_in_executor(None, self.transcribe_audio, bytes_data)
+            
+            print("Transcription done:", transcript)   
 
             await self.send(text_data=transcript)
 
@@ -35,7 +31,7 @@ class TranscriptConsumer(AsyncWebsocketConsumer):
             f.write(audio_bytes)
             temp_path = f.name
 
-        try:
+        try: 
             print("Running Whisper...")
             result = model.transcribe(temp_path, language="en")
             return result["text"]

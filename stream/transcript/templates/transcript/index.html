@@ -13,7 +13,7 @@
   <button id="stopBtn" disabled>Stop Recording</button>
 
   <script>
-    let mediaRecorder;
+    let mediaRecorder;  
     let socket;
     let stream;
     let chunks = [];
@@ -40,11 +40,11 @@
         console.log("WebSocket Error", error);
       };
 
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true }); //user permission
 
-      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder = new MediaRecorder(stream); //records audio
 
-      // Collect chunks instead of sending immediately
+      //Collect chunks instead of sending immediately
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           chunks.push(event.data);

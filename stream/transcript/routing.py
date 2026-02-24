@@ -1,6 +1,6 @@
-from django.urls import re_path
+from django.urls import path
 from . import consumers
 
 websocket_urlpatterns = [
-    re_path(r'^listen/$', consumers.TranscriptConsumer.as_asgi()),
+    path("listen/", consumers.TranscriptConsumer.as_asgi()),
 ]
