@@ -16,11 +16,8 @@ class TranscriptConsumer(AsyncWebsocketConsumer):
 
         if bytes_data:
             print("Received bytes:", len(bytes_data))   
-
             loop = asyncio.get_event_loop()
-
             transcript = await loop.run_in_executor(None, self.transcribe_audio, bytes_data)
-            
             print("Transcription done:", transcript)   
 
             await self.send(text_data=transcript)
@@ -29,7 +26,7 @@ class TranscriptConsumer(AsyncWebsocketConsumer):
         print("Saving temp file...")
         with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as f:
             f.write(audio_bytes)
-            temp_path = f.name
+            temp_path = f.name 
             print("Temp file path:", temp_path)
 
         try: 
